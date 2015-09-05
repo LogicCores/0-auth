@@ -1,6 +1,7 @@
 
 const ASSERT = require("assert");
 const PATH = require("path");
+const FS = require("fs-extra");
 const EXPRESS = require("express");
 const EXPRESS_SESSION = require("express-session");
 const EXPRESS_SESSION_FILE_STORE = require('session-file-store')(EXPRESS_SESSION);
@@ -41,14 +42,19 @@ console.log("CONFIG", options);
             });
         }
     ));
-
+    
+    
+    var sessionBasePath = PATH.join(__dirname, "../../../../cache/sessions");
+    if (!FS.existsSync(sessionBasePath)) {
+        FS.mkdirsSync(sessionBasePath);
+    }
 
     var app = new EXPRESS();
 
     app.use(EXPRESS_SESSION(LODASH.extend(options.session, {
         store: new EXPRESS_SESSION_FILE_STORE(LODASH.extend(options.session.store, {
             // TODO: Make configurable
-            path: PATH.join(__dirname, "../../../../cache/sessions")
+            path: sessionBasePath
         }))
     })));
     app.use(passport.initialize());
