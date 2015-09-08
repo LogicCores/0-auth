@@ -13,8 +13,6 @@ const LODASH = require("lodash");
 
 exports.app = function (options) {
 
-console.log("CONFIG", options);
-
     ASSERT.equal(typeof options.session.secret, "string");
 
     ASSERT.equal(typeof options.passport.github.clientID, "string");
