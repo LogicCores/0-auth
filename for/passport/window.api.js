@@ -40,6 +40,9 @@ exports.spin = function (context) {
 			    }
 
 			    return context.setAuthenticated(authenticated, serverContext);
+			}).catch(function (err) {
+			    console.error("Error fetching session info from '" + url + "':", err.stack);
+			    throw err;
 			});
         }
 
