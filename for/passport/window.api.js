@@ -17,7 +17,7 @@ exports.spin = function (context) {
             context.reset();
 
 
-            var url = "/cores/auth/for/passport/" + NS + "/context.json";
+            var url = "/cores/auth/for/passport/context.json";
 
 			return window.fetch(url, {
 			    credentials: "same-origin"

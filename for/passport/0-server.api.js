@@ -45,8 +45,7 @@ exports.app = function (options) {
 
     app.use(EXPRESS_SESSION(LODASH.extend(options.session, {
         store: new EXPRESS_SESSION_FILE_STORE(LODASH.extend(options.session.store, {
-            // TODO: Make configurable
-            path: PATH.join(__dirname, "../../../../cache/sessions")
+            path: options.session.store.basePath
         }))
     })));
     app.use(passport.initialize());
