@@ -59,8 +59,8 @@ exports.app = function (options) {
         }
         Object.keys(services).forEach(function (service) {
             services[service].urls = {
-                "login": "/cores/auth/for/passport/0/login/github",
-                "logout": "/cores/auth/for/passport/0/logout/github"
+                "login": "/cores/auth/for/passport/login/github",
+                "logout": "/cores/auth/for/passport/logout/github"
             }
         });
 

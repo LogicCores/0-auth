@@ -51,7 +51,7 @@ var Context = exports.Context = function () {
     	}
     }
 
-    self.login = function (namespace, service) {
+    self.login = function (service) {
 
         // TODO: Track authentication for multiple services.
         if (state.authenticated) {
@@ -59,12 +59,11 @@ var Context = exports.Context = function () {
         }
 
         self.emit("login", {
-            namespace: namespace,
             service: service
         });
     }
     
-    self.logout = function (namespace, service) {
+    self.logout = function (service) {
 
         // TODO: Track authentication for multiple services.
         if (!state.authenticated) {
@@ -72,7 +71,6 @@ var Context = exports.Context = function () {
         }
 
         self.emit("logout", {
-            namespace: namespace,
             service: service
         });
     }

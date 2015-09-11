@@ -4,8 +4,6 @@ exports.spin = function (context) {
     var Auth = function () {
         var self = this;
 
-        // TODO: Support multiple namespaces.
-        const NS = "0";
         // TODO: Support multiple services
         const SERVICE = "github";
 
@@ -48,8 +46,6 @@ exports.spin = function (context) {
 
         context.on("login", function (info) {
 
-            if (info.namespace !== NS) return;
-
             var serverContext = context.getServerContext();
 
             if (
@@ -68,8 +64,6 @@ exports.spin = function (context) {
         });
 
         context.on("logout", function (info) {
-
-            if (info.namespace !== NS) return;
 
             var serverContext = context.getServerContext();
 
