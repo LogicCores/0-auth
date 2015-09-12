@@ -11,12 +11,11 @@ const LODASH = require("lodash");
 
 exports.app = function (options) {
 
-
-    ASSERT.equal(typeof options.passport.github.clientID, "string");
-    ASSERT.equal(typeof options.passport.github.clientSecret, "string");
-    ASSERT.equal(typeof options.passport.github.callbackURL, "string");
-    ASSERT.equal(typeof options.passport.github.scope, "string");
-
+    if (!options.passport.github.clientSecret) {
+        return function (req, res, next) {
+            return next();
+        }
+    }
 
 	var passport = new PASSPORT.Passport();
 	passport.serializeUser(function(user, done) {
