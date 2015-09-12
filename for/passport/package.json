@@ -4,11 +4,9 @@
   "private": true,
   "dependencies": {
     "express": "^4.13.3",
-    "express-session": "^1.11.3",
     "lodash": "^3.10.1",
     "passport": "^0.3.0",
     "passport-github": "^1.0.0",
-    "session-file-store": "0.0.18",
     "uuid": "^2.0.1"
   }
 }

@@ -2,78 +2,103 @@
 // TODO: Load adapters as needed on demand
 
 exports.adapters = {
-    passport: require("./for/passport/window.api")
+    passport: require("./for/passport/0-window.api")
 }
 
-
-var Context = exports.Context = function () {
-    var self = this;
-
-    var state = {
-        authenticated: null,
-        serverContext: null
-    };
+exports.forContexts = function (contexts) {
     
-    self.setAuthenticated = function (authenticated, serverContext) {
-        if (state.authenticated) {
-            throw new Error("Already authenticated. Must call 'reset()' first!");
-        }
-    	try {
-            state.serverContext = serverContext;
-    	    if (authenticated) {
-                state.authenticated = true;
-                self.emit("changed:authenticated", state.authenticated);
-    	    }
-    	} catch (err) {
-    		console.error("authenticated changed error:", err.stack);
-    	}
-    }
-    
-    self.getServerContext = function () {
-        return state.serverContext;
-    }
+    var exports = {};
 
-    self.reset = function () {
-    	try {
-    	    var wasAuthenticated = state.authenticated;
-    	    state.authenticated = false;
-            state.serverContext = null;
-            if (
-                wasAuthenticated === true ||
-                // Trigger once when 'reset()' is called before 'setAuthenticated()' so app
-                // can init from clean locked state
-                wasAuthenticated === null
-            ) {
-                self.emit("changed:authenticated", state.authenticated);
+    var Context = exports.Context = function (defaults) {
+        var self = this;
+    
+        var state = {};
+
+        function resetState () {
+            // We need to keep 'state.authenticated = null' for first
+            // run so an update gets triggered below.
+            if (resetState.ranOnce) {
+                state.authenticated = false;
+            } else {
+                state.authenticated = null;
+                resetState.ranOnce = true;
             }
-    	} catch (err) {
-    		console.error("reset changed error:", err.stack);
-    	}
-    }
+            state.serverContext = {};
+            window._.merge(state, window._.cloneDeep(defaults));
+        }
+        resetState();
 
-    self.login = function (service) {
-
-        // TODO: Track authentication for multiple services.
-        if (state.authenticated) {
-            throw new Error("Cannot login. Already authenticated!");
+        self.setAuthenticated = function (authenticated, serverContext) {
+            if (state.authenticated) {
+                throw new Error("Already authenticated. Must call 'reset()' first!");
+            }
+        	try {
+        	    var ctx = {};
+        	    window._.merge(ctx, window._.cloneDeep(defaults.serverContext));
+        	    window._.merge(ctx, window._.cloneDeep(serverContext));
+                state.serverContext = ctx;
+        	    if (authenticated) {
+                    state.authenticated = true;
+                    self.emit("changed:authenticated", state.authenticated);
+        	    }
+        	} catch (err) {
+        		console.error("authenticated changed error:", err.stack);
+        	}
         }
 
-        self.emit("login", {
-            service: service
-        });
-    }
+        self.getServiceContext = function (serviceAlias) {
+            if (!state.serverContext.services) return null;
+            return state.serverContext.services[serviceAlias];
+        }
+
+        self.getServerContext = function () {
+            return state.serverContext;
+        }
     
-    self.logout = function (service) {
-
-        // TODO: Track authentication for multiple services.
-        if (!state.authenticated) {
-            throw new Error("Cannot logout. Already logged out!");
+        self.reset = function () {
+        	try {
+        	    var wasAuthenticated = state.authenticated;
+	            resetState();
+                if (
+                    wasAuthenticated === true ||
+                    // Trigger once when 'reset()' is called before 'setAuthenticated()' so app
+                    // can init from clean locked state
+                    wasAuthenticated === null
+                ) {
+                    self.emit("changed:authenticated", state.authenticated);
+                }
+        	} catch (err) {
+        		console.error("reset changed error:", err.stack);
+        	}
         }
-
-        self.emit("logout", {
-            service: service
-        });
+    
+        self.login = function (service) {
+    
+            // TODO: Track authentication for multiple services.
+            if (state.authenticated) {
+                throw new Error("Cannot login. Already authenticated!");
+            }
+    
+            self.emit("login", {
+                service: service
+            });
+        }
+        
+        self.logout = function (service) {
+    
+            // TODO: Track authentication for multiple services.
+            if (!state.authenticated) {
+                throw new Error("Cannot logout. Already logged out!");
+            }
+    
+            self.emit("logout", {
+                service: service
+            });
+        }
+    
     }
+    Context.prototype = Object.create(window.EventEmitter.prototype);
+    Context.prototype.contexts = contexts;
 
+    return exports;
 }
-Context.prototype = Object.create(window.EventEmitter.prototype);
