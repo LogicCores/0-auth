@@ -33,6 +33,10 @@ exports.spin = function (context) {
 		                    authenticated = true;
 		                }
 			        });
+			    } else
+			    if (serverContext.authenticated === true) {
+			        authenticated = true;
+			        serverContext = {};
 			    }
 
 			    return context.setAuthenticated(authenticated, serverContext);
