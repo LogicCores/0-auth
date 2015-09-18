@@ -1,6 +1,11 @@
 
-// TODO: Load adapters as needed on demand
+exports.forLib = function (LIB) {
 
-exports.adapters = {
-    passport: require("./for/passport/server.api")
-};
+    var exports = {};
+
+    exports.adapters = {
+        passport: require("./for/passport/0-server.api")
+    };
+
+    return exports;
+}
