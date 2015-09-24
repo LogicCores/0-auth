@@ -14,6 +14,10 @@ exports.forLib = function (LIB) {
                 LIB._.merge(config, instanceConfig);
                 config = ccjson.attachDetachedFunctions(config);
                 
+                var context = config.context();
+                
+                context.setAdapterAPI({});
+
                 self.AspectInstance = function (aspectConfig) {
                     return LIB.Promise.resolve({
                         routesApp: function () {
@@ -28,7 +32,7 @@ exports.forLib = function (LIB) {
                                 ccjson.makeDetachedFunction(
                                     function (req, res, next) {
                                         
-                                        var context = {
+                                        var state = {
                                             "authorized": false
                                         };
                                         
@@ -36,17 +40,17 @@ exports.forLib = function (LIB) {
                                             req.session.services &&
                                             Object.keys(req.session.services).length > 0
                                         ) {
-                                            context.authorized = true;
+                                            state.authorized = true;
                                         }
 
                                         if (
                                             config.request &&
-                                            config.request.contextAlias
+                                            config.request.stateAlias
                                         ) {
-                                            if (!req.context) {
-                                                req.context = {};
+                                            if (!req.state) {
+                                                req.state = {};
                                             }
-                                            req.context[config.request.contextAlias] = context;
+                                            req.state[config.request.stateAlias] = state;
                                         }
 
                                         return next();
