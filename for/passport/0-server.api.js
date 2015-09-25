@@ -38,6 +38,9 @@ exports.forLib = function (LIB) {
         	passport.deserializeUser(function(obj, done) {
         	    return done(null, obj);
         	});
+
+            console.log("Github callback url:", options.passport.github.callbackUR);
+
             passport.use(new PASSPORT_GITHUB.Strategy(
                 options.passport.github,
                 function (accessToken, refreshToken, profile, done) {
