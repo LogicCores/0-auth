@@ -28,9 +28,9 @@ exports.forLib = function (LIB) {
                 }, null, 4));
                 return;
             });
-    
+
         } else {
-            
+
         	var passport = new PASSPORT.Passport();
         	passport.serializeUser(function(user, done) {
         	    return done(null, user);
@@ -44,43 +44,43 @@ exports.forLib = function (LIB) {
             passport.use(new PASSPORT_GITHUB.Strategy(
                 options.passport.github,
                 function (accessToken, refreshToken, profile, done) {
-                    return done(null, {                    
+                    return done(null, {
                         "id": profile.id,
-                        "email": profile.emails[0].value,
+                        "email": (profile.emails && profile.emails[0] && profile.emails[0].value) || null,
                         "username": profile.username,
                         "accessToken": accessToken
                     });
                 }
             ));
-        
+
             app.use(passport.initialize());
             app.use(passport.session());
-        
+
             app.get("/context.json", function (req, res, next) {
-        
+
                 var services = JSON.parse(JSON.stringify(req.session.services || {}));
                 if (!services.github) {
                     services.github = {};
                 }
-        
+
                 Object.keys(services).forEach(function (service) {
                     services[service].urls = {
                         "login": PATH.dirname(req.routeUrl) + "/login/github",
                         "logout": PATH.dirname(req.routeUrl) + "/logout/github"
                     }
                 });
-        
+
                 var context = {
                     "services": services
                 };
-        
+
                 res.writeHead(200, {
                     "Content-Type": "application/javascript"
                 });
                 res.end(JSON.stringify(context, null, 4));
                 return;
             });
-        
+
             app.get(
                 "/login/github",
                 passport.authenticate("github")
