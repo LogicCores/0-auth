@@ -13,10 +13,17 @@ exports.forLib = function (LIB) {
                 LIB._.merge(config, defaultConfig);
                 LIB._.merge(config, instanceConfig);
                 config = ccjson.attachDetachedFunctions(config);
-                
-                var context = config.context();
-                
-                context.setAdapterAPI({});
+
+                // POLICY: Run validator over config config to ensure all minimum
+                //         config is there and we should init. If minimum config
+                //         is not there we do not init.
+
+                if (config.context) {
+
+                    var context = config.context();
+
+                    context.setAdapterAPI({});
+                }
 
                 self.AspectInstance = function (aspectConfig) {
                     return LIB.Promise.resolve({
