@@ -1,12 +1,7 @@
 
-const ASSERT = require("assert");
-const PATH = require("path");
-const EXPRESS = require("express");
 const PASSPORT = require("passport");
 const PASSPORT_GITHUB = require("passport-github");
 const CRYPTO = require("crypto");
-const UUID = require("uuid");
-const LODASH = require("lodash");
 
 
 exports.forLib = function (LIB) {
@@ -15,7 +10,7 @@ exports.forLib = function (LIB) {
 
     exports.app = function (options) {
     
-        var app = new EXPRESS();
+        var app = new LIB.express();
     
         if (options.forceAuthenticated === true) {
     
@@ -65,8 +60,8 @@ exports.forLib = function (LIB) {
 
                 Object.keys(services).forEach(function (service) {
                     services[service].urls = {
-                        "login": PATH.dirname(req.routeUrl) + "/login/github",
-                        "logout": PATH.dirname(req.routeUrl) + "/logout/github"
+                        "login": LIB.path.dirname(req.routeUrl) + "/login/github",
+                        "logout": LIB.path.dirname(req.routeUrl) + "/logout/github"
                     }
                 });
 
@@ -101,7 +96,7 @@ exports.forLib = function (LIB) {
                     function finalize () {
                         req.session.services["github"] = {
                             "key": CRYPTO.createHash("sha1").update(
-                                UUID.v4() + ":" + JSON.stringify(req.session.passport.user, null, 4)
+                                LIB.uuid.v4() + ":" + JSON.stringify(req.session.passport.user, null, 4)
                             ).digest("hex"),
                             "details": req.session.passport.user
                         }

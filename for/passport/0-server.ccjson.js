@@ -2,8 +2,6 @@
 exports.forLib = function (LIB) {
     var ccjson = this;
 
-    const SERVER = require("./0-server.api").forLib(LIB);
-
     return LIB.Promise.resolve({
         forConfig: function (defaultConfig) {
 
@@ -26,6 +24,9 @@ exports.forLib = function (LIB) {
                 }
 
                 self.AspectInstance = function (aspectConfig) {
+
+                    const SERVER = require("./0-server.api").forLib(LIB);
+
                     return LIB.Promise.resolve({
                         routesApp: function () {
                             return LIB.Promise.resolve(
